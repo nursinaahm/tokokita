@@ -30,19 +30,29 @@ class ProdukBloc {
     return jsonObj['status'];
   }
 
-  static Future<bool> updateProduk({required Produk produk}) async {
-    String apiUrl = ApiUrl.updateProduk(produk.id!);
+static Future<bool> updateProduk({required Produk produk}) async {
+    try {
+      String apiUrl = ApiUrl.updateProduk(produk.id!);
 
-    var body = {
-      "kode_produk": produk.kodeProduk,
-      "nama_produk": produk.namaProduk,
-      "harga": produk.hargaProduk.toString()
-    };
-    print("Body : $body");
-    var response = await Api().post(apiUrl, body);
-    var jsonObj = json.decode(response.body);
-    return jsonObj['data'];
-  }
+      var body = {
+        "kode_produk": produk.kodeProduk,
+        "nama_produk": produk.namaProduk,
+        "harga": produk.hargaProduk.toString(),
+      };
+
+      var response = await Api().post(apiUrl, body);
+      var jsonObj = json.decode(response.body);
+
+      if (jsonObj.containsKey('status') && jsonObj['status'] == true) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      print("Error in updateProduk: $error");
+      return false;
+    }
+}
 
   static Future<bool> deleteProduk({int? id}) async {
     String apiUrl = ApiUrl.deleteProduk(id!);
